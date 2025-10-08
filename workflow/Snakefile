@@ -1,2 +1,4 @@
-rule identify_pairwise_analyses:
-    
+configfile: "workflow/config.yaml"
+
+
+include: "rules/prepare_data.smk"
