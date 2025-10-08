@@ -1,1 +1,5 @@
+SCRIPTS_DIR: "scripts"
+DATA_DIR: "../test/data"
+OUTPUTS_DIR: "../test/outputs"
+
 DISTANCE_LIMIT: 250000
