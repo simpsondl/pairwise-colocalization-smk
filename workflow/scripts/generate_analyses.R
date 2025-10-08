@@ -32,9 +32,8 @@ for(i in 1:nrow(signals)){
       tmp.df <- data.frame(gwas1 = signals$gwas[i], 
                            gwas2 = signals$gwas[j],
                            chr = chr,
-                           pos.start = min(pos, signals$position[j]) - window,
-                           pos.end = max(pos, signals$position[j]) + window)
-      
+                           pos.start = pos - window,
+                           pos.end = pos + window)
       analyses <- rbind(analyses, tmp.df)
     }
   } 
@@ -44,7 +43,7 @@ for(i in 1:nrow(signals)){
 analyses$pos.start[analyses$pos.start < 0] <- 1
 
 # add an index
-analyses$pair_index <- paste0("pw_",1:nrow(analyses))
+analyses <- analyses %>% mutate(pair_index = paste0("pw_",1:nrow(analyses)), .before = 1) 
 
 # save
 write_csv(analyses, snakemake@output[["output_pairs"]])
