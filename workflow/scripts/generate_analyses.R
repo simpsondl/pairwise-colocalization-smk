@@ -4,7 +4,7 @@ library(tidyr)
 
 # Import data and settings
 signals <- read_csv(snakemake@input[["input_signals"]])
-window <- snakemake@config[["DISTANCE_LIMIT"]]
+window <- snakemake@params[["distance"]]
 
 # Check if required columns are present in signals file
 required_cols <- c("gwas", "chromosome", "position")

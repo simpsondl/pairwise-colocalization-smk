@@ -1,4 +1,5 @@
 DATA_DIR: "test/data"
+SUMSTATS_DIR: "test/data/sumstats"
 OUTPUTS_DIR: "test/outputs"
 
 DISTANCE_LIMIT: 250000

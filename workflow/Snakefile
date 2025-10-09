@@ -1,44 +1,60 @@
-
 configfile: "workflow/config.yaml"
 
 
-include: "rules/prepare_data.smk"
+# First rule generates all pairs to test
+rule find_pairs:
+    input:
+        input_signals=config["DATA_DIR"] + "/input_signals.csv",
+    output:
+        output_pairs=config["OUTPUTS_DIR"] + "/pairs_to_test.csv",
+    params:
+        distance=config["DISTANCE_LIMIT"],
+    script:
+        "scripts/generate_analyses.R"
 
 
-# Get all pair indices from the generated CSV
+# Read the pairs file to get list of pairs to process
 import pandas as pd
 import os
 
-PAIRS_CSV = config["OUTPUTS_DIR"] + "/pairwise_colocalization_to_perform.csv"
-if os.path.exists(PAIRS_CSV):
-    PAIRS = pd.read_csv(PAIRS_CSV)["pair_index"].tolist()
+if os.path.exists(config["OUTPUTS_DIR"] + "/pairs_to_test.csv"):
+    PAIRS = pd.read_csv(config["OUTPUTS_DIR"] + "/pairs_to_test.csv")[
+        "pair_index"
+    ].tolist()
+
 else:
     PAIRS = []
 
 
+# Aggregation rule that requires all final results
 rule all:
     input:
-        expand(
-            config["OUTPUTS_DIR"] + "/coloc_{pair_index}_result.txt", pair_index=PAIRS
-        ),
+        # First ensure pairs file exists
+        config["OUTPUTS_DIR"] + "/pairs_to_test.csv",
+        # Then require all coloc results
+        expand(config["OUTPUTS_DIR"] + "/coloc_results/{pair_id}.txt", pair_id=PAIRS),
 
 
-rule prepare_sumstats:
+# Extract regions for a single pair
+rule extract_regions:
     input:
-        pairs=config["OUTPUTS_DIR"] + "/pairwise_colocalization_to_perform.csv",
+        pairs=config["OUTPUTS_DIR"] + "/pairs_to_test.csv",
+        sumstats_dir=config["SUMSTATS_DIR"],
     output:
-        sumstats=config["OUTPUTS_DIR"] + "/coloc_{pair_index}_sumstats.txt",
-    shell:
-        """
-        awk -F, '$6 == "{wildcards.pair_index}"' {input.pairs} > analysis_config_{wildcards.pair_index}.txt
-        bash slurm/colocalization_regions.sh preprocessed_v2 analysis_config_{wildcards.pair_index}.txt {output.sumstats} {wildcards.pair_index}
-        """
+        gwas1=temp(config["OUTPUTS_DIR"] + "/extracted_regions/{pair_id}_gwas1.txt"),
+        gwas2=temp(config["OUTPUTS_DIR"] + "/extracted_regions/{pair_id}_gwas2.txt"),
+    params:
+        pair_id="{pair_id}",
+    script:
+        "scripts/extract_regions.R"
 
 
+# Run coloc on a pair of extracted regions
 rule run_coloc:
     input:
-        sumstats=config["OUTPUTS_DIR"] + "/coloc_{pair_index}_sumstats.txt",
+        gwas1=config["OUTPUTS_DIR"] + "/extracted_regions/{pair_id}_gwas1.txt",
+        gwas2=config["OUTPUTS_DIR"] + "/extracted_regions/{pair_id}_gwas2.txt",
     output:
-        result=config["OUTPUTS_DIR"] + "/coloc_{pair_index}_result.txt",
-    shell:
-        "Rscript slurm/run_coloc.R {input.sumstats} > {output.result}"
+        results=config["OUTPUTS_DIR"] + "/coloc_results/{pair_id}.txt",
+    script:
+        "scripts/run_coloc.R"
