@@ -1,29 +1,50 @@
 library(coloc)
+library(readr)
 
 # Read the extracted regions
-gwas1 <- read.table(snakemake@input[["gwas1"]], header=TRUE)
-gwas2 <- read.table(snakemake@input[["gwas2"]], header=TRUE)
+combined_sumstats <- read_csv(snakemake@input[["input_joined_sumstats"]])
+# Read input signals
+signals <- read_csv(snakemake@input[["input_signals"]])
 
-# Set up dataset 1
-dataset1 <- list(
-  beta = gwas1$beta,
-  varbeta = gwas1$se^2,
-  type = "quant",
-  snp = gwas1$rsid,
-  position = gwas1$position
-)
 
-# Set up dataset 2
-dataset2 <- list(
-  beta = gwas2$beta,
-  varbeta = gwas2$se^2,
-  type = "quant",
-  snp = gwas2$rsid,
-  position = gwas2$position
-)
 
+# QC
+combined_sumstats[] <- sapply(combined_sumstats, as.numeric)
+combined_sumstats <- combined_sumstats[combined_sumstats$se.gwas1 != 0 & combined_sumstats$se.gwas2 != 0,]
+combined_sumstats <- combined_sumstats[!is.na(combined_sumstats$se.gwas1) & !is.na(combined_sumstats$se.gwas2),]
+
+# Set up study data structures
+study1 <- list(beta = combined_sumstats$beta.gwas1,
+               varbeta = (combined_sumstats$se.gwas1)^2,
+               snp = paste(combined_sumstats$chromosome, combined_sumstats$position, sep = ":"),
+               type = study_meta$Type[study_meta$Data_File == analysis_meta$V1[1]])
+
+if(study1$type == "cc"){
+  study1 <- c(study1, 
+                 s = study_meta$s[study_meta$Data_File == analysis_meta$V1[1]])
+} else {
+  study1 <- c(study1,
+                 sdY = 1)
+}
+
+study2 <- list(beta = combined_sumstats$X4,
+               varbeta = (combined_sumstats$X5)^2,
+               snp = as.character(combined_sumstats$X1),
+               type = study_meta$Type[study_meta$Data_File == analysis_meta$V2[1]])
+
+if(study2$type == "cc"){
+  study2 <- c(study2, 
+                 s = study_meta$s[study_meta$Data_File == analysis_meta$V2[1]])
+} else {
+  study2 <- c(study2,
+                 sdY = 1)
+}
+
+print(analysis_id)
 # Run coloc
-results <- coloc.abf(dataset1, dataset2)
+coloc_res <- coloc.abf(dataset1 = study1,
+                       dataset2 = study2)
+
 
 # Format results for output
 output <- data.frame(

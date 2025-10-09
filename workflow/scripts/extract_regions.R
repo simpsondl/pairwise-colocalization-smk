@@ -1,3 +1,5 @@
+library(dplyr)
+
 # Read pairs file
 pairs <- read.csv(snakemake@input[["pairs"]])
 
@@ -9,8 +11,8 @@ if(nrow(pair) == 0) {
 }
 
 # Function to extract region from a GWAS file
-extract_region <- function(gwas_file, chr, start, end, out_file) {
-  # Read the full file first to ensure proper column handling
+extract_region <- function(gwas_file, chr, start, end) {
+  # Read the full file 
   data <- read.table(gwas_file, header=FALSE)
   colnames(data) <- c("chromosome",	"position",	"allele1",	"allele2",	"beta",	"se",	"pval")
   
@@ -19,20 +21,22 @@ extract_region <- function(gwas_file, chr, start, end, out_file) {
                      data$position >= start & 
                      data$position <= end, ]
   
-  # Write extracted region
-  write.table(region_data, out_file, 
-              row.names=FALSE, quote=FALSE, sep="\t")
+  return(region_data)
 }
 
 # Extract regions for both GWAS
-extract_region(
+gwas1 <- extract_region(
   file.path(snakemake@input[["sumstats_dir"]], paste0(pair$gwas1, ".txt")),
-  pair$chr, pair$start, pair$end,
-  snakemake@output[["gwas1"]]
+  pair$chr, pair$pos.start, pair$pos.end
 )
 
-extract_region(
+gwas2<- extract_region(
   file.path(snakemake@input[["sumstats_dir"]], paste0(pair$gwas2, ".txt")),
-  pair$chr, pair$start, pair$end,
-  snakemake@output[["gwas2"]]
+  pair$chr, pair$pos.start, pair$pos.end
 )
+
+both_gwas <- inner_join(gwas1[,1:6], gwas2[,1:6], 
+                        by=c("chromosome", "position", "allele1", "allele2"), 
+                        suffix=c(".gwas1", ".gwas2"))
+
+write.csv(both_gwas, snakemake@output[["output_joined_sumstats"]], row.names=FALSE, quote=FALSE)

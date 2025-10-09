@@ -1,1 +1,0 @@
-chromosome	position	allele1	allele2	beta	se	pval
