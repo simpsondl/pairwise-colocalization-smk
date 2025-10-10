@@ -6,6 +6,14 @@ min_version("9.12.0")
 configfile: "config/config.yaml"
 
 
+rule all:
+    input:
+        expand(
+            config["OUTPUTS_DIR"] + "/joined_credible_sets/{signal_code}_cs95.txt",
+            signal_code=COLOC_IDS,
+        ),
+
+
 include: "rules/helpers.smk"
 include: "rules/prepare_data.smk"
 include: "rules/perform_colocalization.smk"

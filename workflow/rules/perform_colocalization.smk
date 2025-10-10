@@ -55,11 +55,3 @@ rule join_credible_sets:
         + "/joined_credible_sets/{signal_code}_cs95.txt",
     script:
         "../scripts/join_credible_sets.R"
-
-
-rule all:
-    input:
-        expand(
-            config["OUTPUTS_DIR"] + "/joined_credible_sets/{signal_code}_cs95.txt",
-            signal_code=COLOC_IDS,
-        ),
