@@ -1,7 +1,3 @@
-import pandas as pd
-import os
-
-
 configfile: "workflow/config.yaml"
 
 
@@ -15,6 +11,10 @@ rule find_pairs:
         distance=config["DISTANCE_LIMIT"],
     script:
         "scripts/generate_analyses.R"
+
+
+import pandas as pd
+import os
 
 
 # Read the pairs file to get list of pairs to process
@@ -38,7 +38,7 @@ rule all:
 # Extract regions for a single pair
 rule extract_regions:
     input:
-        pairs=find_pairs.output.output_pairs,
+        pairs=config["OUTPUTS_DIR"] + "/pairs_to_test.csv",
         sumstats_dir=config["SUMSTATS_DIR"],
     output:
         output_joined_sumstats=config["OUTPUTS_DIR"]
@@ -53,12 +53,13 @@ rule extract_regions:
 rule run_coloc:
     input:
         input_signals=config["DATA_DIR"] + "/input_signals.csv",
-        input_pairs=find_pairs.output.output_pairs,
+        input_pairs=config["OUTPUTS_DIR"] + "/pairs_to_test.csv",
         input_joined_sumstats=config["OUTPUTS_DIR"]
         + "/extracted_regions/{pair_id}_sumstats.txt",
     params:
         pair_id="{pair_id}",
     output:
         output_results=config["OUTPUTS_DIR"] + "/coloc_results/{pair_id}.txt",
+        output_cs=config["OUTPUTS_DIR"] + "/coloc_credible_sets/{pair_id}_cs95.txt",
     script:
         "scripts/run_coloc.R"

@@ -21,6 +21,7 @@ combined_sumstats <- combined_sumstats[!is.na(combined_sumstats$se.gwas1) & !is.
 # Get study names and meta information
 analysis_id <- snakemake@params[["pair_id"]]
 analysis_meta <- as.data.frame(pairwise_analyses[pairwise_analyses$pair_index == analysis_id,])
+print(colnames(analysis_meta))
 
 if(nrow(analysis_meta) == 0) {
   stop("Pair ID not found in pairs file: ", analysis_id)
@@ -64,14 +65,29 @@ coloc_res <- coloc.abf(dataset1 = study1,
 
 
 # Format results for output
-output <- data.frame(
-  nsnps = results$summary["nsnps"],
-  PP.H0 = results$summary["PP.H0"],
-  PP.H1 = results$summary["PP.H1"],
-  PP.H2 = results$summary["PP.H2"],
-  PP.H3 = results$summary["PP.H3"],
-  PP.H4 = results$summary["PP.H4"]
-)
+analysis_results <- data.frame(analysis = analysis_id,
+			                         nvar = nrow(combined_sumstats),
+                               h0 = coloc_res$summary[2],
+                               h1 = coloc_res$summary[3],
+                               h2 = coloc_res$summary[4],
+                               h3 = coloc_res$summary[5],
+                               h4 = coloc_res$summary[6])
+
+# Check if we should make a credible set
+if(analysis_results$h4 > 0.5){
+  # Make a credible set
+  o <- order(coloc_res$results$SNP.PP.H4, decreasing = TRUE)
+  cs <- cumsum(coloc_res$results$SNP.PP.H4[o])
+  w <- which(cs > 0.95)[1]
+  
+  cs_output <- coloc_res$results[o,][1:w,][,c(1,11)]
+  cs_output$chr <- unique(analysis_meta$chr) 
+  cs_output <- cs_output[,c(3,1,2)]
+} else {
+  cs_output <- data.frame()
+}
 
 # Write results
-write_tsv(output, snakemake@output[["output_results"]])
+write_tsv(analysis_results, snakemake@output[["output_results"]])
+write_tsv(cs_output, snakemake@output[["output_cs"]])
+
