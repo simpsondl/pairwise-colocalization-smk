@@ -13,8 +13,9 @@ if(length(missing_cols) > 0){
   stop(paste("Missing required columns in signals file:", paste(missing_cols, collapse = ", ")))
 }
 
-# Placeholder
+# Placeholders
 analyses <- data.frame()
+exact_matches <- data.frame()
 
 # Loop over each signal
 for(i in 1:nrow(signals)){
@@ -40,6 +41,14 @@ for(i in 1:nrow(signals)){
                              pos.end = pos + window)
         analyses <- rbind(analyses, tmp.df)
       }    
+    } else {
+      # If same variant is identified, no need to colocalize
+      # just record the signal position
+      tmp.df <- data.frame(gwas1 = signals$gwas[i], 
+                           gwas2 = signals$gwas[j],
+                           chr = chr,
+                           gwas_signal_pos = pos)
+      exact_matches <- rbind(exact_matches, tmp.df)
     }
   } 
 }
@@ -61,3 +70,4 @@ analyses <- analyses %>%
 
 # save
 write_csv(analyses, snakemake@output[["output_pairs"]])
+write_csv(exact_matches, snakemake@output[["output_exact_matches"]])

@@ -4,6 +4,7 @@ rule find_pairs:
         input_signals=config["DATA_DIR"] + "/input_signals.csv",
     output:
         output_pairs=config["OUTPUTS_DIR"] + "/pairs_to_test.csv",
+        output_exact_matches=config["OUTPUTS_DIR"] + "/exact_variant_matches.csv",
     params:
         distance=config["DISTANCE_LIMIT"],
     script:
