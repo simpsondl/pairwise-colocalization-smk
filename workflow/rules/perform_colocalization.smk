@@ -21,3 +21,12 @@ rule aggregate_coloc_results:
         aggregated_results=config["OUTPUTS_DIR"] + "/all_coloc_results.txt",
     shell:
         "awk 'FNR == 2' {input} > {output.aggregated_results}"
+
+
+rule define_colocalized_signals:
+    input:
+        coloc_results=config["OUTPUTS_DIR"] + "/all_coloc_results.txt",
+    output:
+        coloc_signals=config["OUTPUTS_DIR"] + "/colocalized_signals.txt",
+    script:
+        "../scripts/define_colocalized_signals.R"
