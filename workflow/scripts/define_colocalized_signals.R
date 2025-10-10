@@ -28,8 +28,6 @@ coloc_consistent <- coloc_results %>%
               coloc = sum(coloc),
               robust = sum(robust))
 
-print(head(coloc_consistent))
-
 # Define colocalized signals
 coloc_consistent <- coloc_consistent %>%
     mutate(colocalized = (N == 2) & (dense > 0) & (dropout == 0) & (coloc == 2) & (robust >= 1))
