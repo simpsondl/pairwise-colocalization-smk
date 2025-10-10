@@ -63,6 +63,9 @@ ifelse(study2$type == "cc",
 coloc_res <- coloc.abf(dataset1 = study1,
                        dataset2 = study2)
 
+# Perform sensitivity analysis
+coloc_sens <- sensitivity(coloc_res, rule="H4 > 0.5", 
+                          doplot = FALSE, plot.manhattans = FALSE)
 
 # Format results for output
 analysis_results <- data.frame(analysis = analysis_id,
@@ -71,7 +74,8 @@ analysis_results <- data.frame(analysis = analysis_id,
                                h1 = coloc_res$summary[3],
                                h2 = coloc_res$summary[4],
                                h3 = coloc_res$summary[5],
-                               h4 = coloc_res$summary[6])
+                               h4 = coloc_res$summary[6],
+                               min_p12 = min(coloc_sens$p12[coloc_sens$pass]))
 
 # Check if we should make a credible set
 if(analysis_results$h4 > 0.5){
