@@ -45,7 +45,8 @@ coloc_codes <- coloc_results %>%
     select(pair_id, analysis) %>%
     group_by(pair_id) %>%
     summarise(analysis1 = analysis[1],
-              analysis2 = analysis[2])
+              analysis2 = analysis[2]) %>%
+    mutate(coloc_id = paste0("coloc_",1:nrow(.)))
 
 write_csv(output_df, snakemake@output[["output_coloc_signals"]])
 write_csv(coloc_codes, snakemake@output[["output_coloc_codes"]])

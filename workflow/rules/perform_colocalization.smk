@@ -37,3 +37,18 @@ rule define_colocalized_signals:
         output_coloc_codes=config["OUTPUTS_DIR"] + "/colocalized_signal_codes.txt",
     script:
         "../scripts/define_colocalized_signals.R"
+
+
+rule join_credible_sets:
+    input:
+        expand(
+            config["OUTPUTS_DIR"] + "/coloc_credible_sets/{pair_id}_cs95.txt",
+            pair_id=COLOCALIZED,
+        ),
+    output:
+        expand(
+            config["OUTPUTS_DIR"] + "/joined_credible_sets/{signal_code}_cs95.txt",
+            signal_code=COLOC_IDS,
+        ),
+    script:
+        "../scripts/join_credible_sets.R"
