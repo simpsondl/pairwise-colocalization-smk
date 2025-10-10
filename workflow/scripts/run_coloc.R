@@ -5,42 +5,59 @@ library(readr)
 combined_sumstats <- read_csv(snakemake@input[["input_joined_sumstats"]])
 # Read input signals
 signals <- read_csv(snakemake@input[["input_signals"]])
+# Analysis data
+pairwise_analyses <- read_csv(snakemake@input[["input_pairs"]])
 
-
+# Filter to just columns of interest (ie drop allele columns)
+wanted_cols <- c("chromosome", "position", "beta.gwas1", "se.gwas1", "beta.gwas2", "se.gwas2")
+combined_sumstats <- combined_sumstats[, wanted_cols]
 
 # QC
 combined_sumstats[] <- sapply(combined_sumstats, as.numeric)
+# If se for either GWAS is 0 or NA, remove variant
 combined_sumstats <- combined_sumstats[combined_sumstats$se.gwas1 != 0 & combined_sumstats$se.gwas2 != 0,]
 combined_sumstats <- combined_sumstats[!is.na(combined_sumstats$se.gwas1) & !is.na(combined_sumstats$se.gwas2),]
+
+# Get study names and meta information
+analysis_id <- snakemake@params[["pair_id"]]
+analysis_meta <- as.data.frame(pairwise_analyses[pairwise_analyses$pair_index == analysis_id,])
+
+if(nrow(analysis_meta) == 0) {
+  stop("Pair ID not found in pairs file: ", analysis_id)
+} else if(nrow(analysis_meta) > 1) {
+  stop("Multiple entries found for Pair ID in pairs file: ", analysis_id)
+}
+
+gwas1_name <- analysis_meta$gwas1[1]
+gwas2_name <- analysis_meta$gwas2[1]
+
+gwas1_type <- as.character(signals$type[signals$gwas == gwas1_name][1])
+gwas2_type <- as.character(signals$type[signals$gwas == gwas2_name][1])
+
+gwas1_scalar <- as.numeric(signals$scalar[signals$gwas == gwas1_name][1])
+gwas2_scalar <- as.numeric(signals$scalar[signals$gwas == gwas2_name][1])
 
 # Set up study data structures
 study1 <- list(beta = combined_sumstats$beta.gwas1,
                varbeta = (combined_sumstats$se.gwas1)^2,
                snp = paste(combined_sumstats$chromosome, combined_sumstats$position, sep = ":"),
-               type = study_meta$Type[study_meta$Data_File == analysis_meta$V1[1]])
+               type = gwas1_type,
+               scalar = gwas1_scalar)
 
-if(study1$type == "cc"){
-  study1 <- c(study1, 
-                 s = study_meta$s[study_meta$Data_File == analysis_meta$V1[1]])
-} else {
-  study1 <- c(study1,
-                 sdY = 1)
-}
+ifelse(study1$type == "cc", 
+       names(study1)[names(study1) == "scalar"] <- "s", 
+       names(study1)[names(study1) == "scalar"] <- "sdY")
 
-study2 <- list(beta = combined_sumstats$X4,
-               varbeta = (combined_sumstats$X5)^2,
-               snp = as.character(combined_sumstats$X1),
-               type = study_meta$Type[study_meta$Data_File == analysis_meta$V2[1]])
+study2 <- list(beta = combined_sumstats$beta.gwas2,
+               varbeta = (combined_sumstats$se.gwas2)^2,
+               snp = paste(combined_sumstats$chromosome, combined_sumstats$position, sep = ":"),
+               type = gwas2_type,
+               scalar = gwas2_scalar)
 
-if(study2$type == "cc"){
-  study2 <- c(study2, 
-                 s = study_meta$s[study_meta$Data_File == analysis_meta$V2[1]])
-} else {
-  study2 <- c(study2,
-                 sdY = 1)
-}
+ifelse(study2$type == "cc", 
+       names(study2)[names(study2) == "scalar"] <- "s", 
+       names(study2)[names(study2) == "scalar"] <- "sdY")
 
-print(analysis_id)
 # Run coloc
 coloc_res <- coloc.abf(dataset1 = study1,
                        dataset2 = study2)
@@ -57,5 +74,4 @@ output <- data.frame(
 )
 
 # Write results
-write.table(output, snakemake@output[["results"]], 
-            row.names=FALSE, quote=FALSE, sep="\t")
+write_tsv(output, snakemake@output[["output_results"]])

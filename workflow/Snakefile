@@ -22,7 +22,6 @@ if os.path.exists(config["OUTPUTS_DIR"] + "/pairs_to_test.csv"):
     PAIRS = pd.read_csv(config["OUTPUTS_DIR"] + "/pairs_to_test.csv")[
         "pair_index"
     ].tolist()
-
 else:
     PAIRS = []
 
@@ -39,7 +38,7 @@ rule all:
 # Extract regions for a single pair
 rule extract_regions:
     input:
-        pairs=config["OUTPUTS_DIR"] + "/pairs_to_test.csv",
+        pairs=find_pairs.output.output_pairs,
         sumstats_dir=config["SUMSTATS_DIR"],
     output:
         output_joined_sumstats=config["OUTPUTS_DIR"]
@@ -54,6 +53,7 @@ rule extract_regions:
 rule run_coloc:
     input:
         input_signals=config["DATA_DIR"] + "/input_signals.csv",
+        input_pairs=find_pairs.output.output_pairs,
         input_joined_sumstats=config["OUTPUTS_DIR"]
         + "/extracted_regions/{pair_id}_sumstats.txt",
     params:
