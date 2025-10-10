@@ -1,7 +1,26 @@
-# Required inputs
+###############################################################################
+###############################################################################
+
+# REQUIRED INPUTS, ADJUST AS NEEDED
+
+# Directories for input data, summary statistics, and outputs
+# Input data directory should include a file "input_signals.csv" with columns:
+
+# chromosome, position, gwas, allele1, allele2, pval, type, scalar
+
+# gwas should indicate the prefix of the summary statistics file for that signal
+# type should be either "cc" or "quant"
+# scalar should be the case fraction for cc traits, or standard deviation for quant traits
+# for quant traits, this is usually normalized to 1
+
 DATA_DIR: "test/data"
 SUMSTATS_DIR: "test/data/sumstats"
 OUTPUTS_DIR: "test/outputs"
+
+###############################################################################
+###############################################################################
+
+# ADJUSTABLE PARAMETERS
 
 # Max distance between signals to consider for colocalization
 DISTANCE_LIMIT: 250000
