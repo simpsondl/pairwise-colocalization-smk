@@ -40,15 +40,15 @@ for(i in 1:nrow(signals)){
                              pos.start = pos - window,
                              pos.end = pos + window)
         analyses <- rbind(analyses, tmp.df)
+      }  else {
+        # If same variant is identified, no need to colocalize
+        # just record the signal position
+        tmp.df <- data.frame(gwas1 = signals$gwas[i], 
+                             gwas2 = signals$gwas[j],
+                             chr = chr,
+                             gwas_signal_pos = pos)
+        exact_matches <- rbind(exact_matches, tmp.df)
       }    
-    } else {
-      # If same variant is identified, no need to colocalize
-      # just record the signal position
-      tmp.df <- data.frame(gwas1 = signals$gwas[i], 
-                           gwas2 = signals$gwas[j],
-                           chr = chr,
-                           gwas_signal_pos = pos)
-      exact_matches <- rbind(exact_matches, tmp.df)
     }
   } 
 }
