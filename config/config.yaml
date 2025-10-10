@@ -1,0 +1,20 @@
+# Required inputs
+DATA_DIR: "test/data"
+SUMSTATS_DIR: "test/data/sumstats"
+OUTPUTS_DIR: "test/outputs"
+
+# Max distance between signals to consider for colocalization
+DISTANCE_LIMIT: 250000
+
+# Colocalization filtering thresholds
+DENSE_NVAR_THRESHOLD: 500
+SIGNAL_DROPOUT_THRESHOLD: 0.1
+COLOC_H4_THRESHOLD: 0.75
+SENSITIVITY_P12_THRESHOLD: 1e-6
+
+# Colocalization calling criteria
+MIN_N: 2  # require both AB/BA analyses to be present
+MIN_DENSE: 1  # at least one analysis must be dense
+MAX_DROPOUT: 0  # no analyses can have signal dropout
+MIN_COLOC: 2  # both analyses must show strong support for colocalization
+MIN_ROBUST: 1  # at least one analysis must be robust to many priors

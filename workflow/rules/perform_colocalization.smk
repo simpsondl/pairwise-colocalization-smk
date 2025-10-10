@@ -32,6 +32,11 @@ rule define_colocalized_signals:
         signal_dropout_threshold=config["SIGNAL_DROPOUT_THRESHOLD"],
         coloc_h4_threshold=config["COLOC_H4_THRESHOLD"],
         sensitivity_p12_threshold=config["SENSITIVITY_P12_THRESHOLD"],
+        min_n=config["MIN_N"],
+        min_dense=config["MIN_DENSE"],
+        max_dropout=config["MAX_DROPOUT"],
+        min_coloc=config["MIN_COLOC"],
+        min_robust=config["MIN_ROBUST"],
     output:
         output_coloc_signals=config["OUTPUTS_DIR"] + "/colocalized_signals.txt",
         output_coloc_codes=config["OUTPUTS_DIR"] + "/colocalized_signal_codes.txt",

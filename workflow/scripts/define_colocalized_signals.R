@@ -30,7 +30,11 @@ coloc_consistent <- coloc_results %>%
 
 # Define colocalized signals
 coloc_consistent <- coloc_consistent %>%
-    mutate(colocalized = (N == 2) & (dense > 0) & (dropout == 0) & (coloc == 2) & (robust >= 1))
+    mutate(colocalized = (N == as.numeric(snakemake@params[["min_n"]])) & 
+                            (dense >= as.numeric(snakemake@params[["min_dense"]])) & 
+                            (dropout <= as.numeric(snakemake@params[["max_dropout"]])) & 
+                            (coloc >= as.numeric(snakemake@params[["min_coloc"]])) & 
+                            (robust >= as.numeric(snakemake@params[["min_robust"]])))
 
 # Create output
 output_df <- analysis_info %>%
