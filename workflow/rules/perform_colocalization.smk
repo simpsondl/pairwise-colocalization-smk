@@ -12,3 +12,12 @@ rule run_coloc:
         output_cs=config["OUTPUTS_DIR"] + "/coloc_credible_sets/{pair_id}_cs95.txt",
     script:
         "../scripts/run_coloc.R"
+
+
+rule aggregate_coloc_results:
+    input:
+        expand(config["OUTPUTS_DIR"] + "/coloc_results/{pair_id}.txt", pair_id=PAIRS),
+    output:
+        aggregated_results=config["OUTPUTS_DIR"] + "/all_coloc_results.txt",
+    shell:
+        "awk 'FNR == 2' {input} > {output.aggregated_results}"

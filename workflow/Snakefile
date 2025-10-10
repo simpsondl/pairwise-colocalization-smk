@@ -4,12 +4,3 @@ configfile: "workflow/config.yaml"
 include: "rules/helpers.smk"
 include: "rules/prepare_data.smk"
 include: "rules/perform_colocalization.smk"
-
-
-# Aggregation rule that requires all final results
-rule all:
-    input:
-        # First ensure pairs file exists
-        config["OUTPUTS_DIR"] + "/pairs_to_test.csv",
-        # Then require all coloc results
-        expand(config["OUTPUTS_DIR"] + "/coloc_results/{pair_id}.txt", pair_id=PAIRS),
