@@ -1,16 +1,24 @@
-rule generate_analyses:
+# First rule generates all pairs to test
+rule find_pairs:
     input:
         input_signals=config["DATA_DIR"] + "/input_signals.csv",
     output:
-        output_pairs=config["OUTPUTS_DIR"] + "/pairwise_colocalizations_to_check.csv",
+        output_pairs=config["OUTPUTS_DIR"] + "/pairs_to_test.csv",
+    params:
+        distance=config["DISTANCE_LIMIT"],
     script:
         "../scripts/generate_analyses.R"
 
 
-# rule create_joined_sumstats:
-#     input:
-#         input_sumstats_appended="preprocessed.sorted.tsv",
-#         input_pairs=rules.generate_analyses.output.output_pairs,
-#     output:
-#         output_joined_sumstats=config["OUTPUTS_DIR"]
-#         + "/joined_sumstats_{pairwise_analysis}.tsv",
+# Extract regions for a single pair
+rule extract_regions:
+    input:
+        pairs=config["OUTPUTS_DIR"] + "/pairs_to_test.csv",
+        sumstats_dir=config["SUMSTATS_DIR"],
+    output:
+        output_joined_sumstats=config["OUTPUTS_DIR"]
+        + "/extracted_regions/{pair_id}_sumstats.txt",
+    params:
+        pair_id="{pair_id}",
+    script:
+        "../scripts/extract_regions.R"
