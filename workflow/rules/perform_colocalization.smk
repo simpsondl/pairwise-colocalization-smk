@@ -25,8 +25,15 @@ rule aggregate_coloc_results:
 
 rule define_colocalized_signals:
     input:
-        coloc_results=config["OUTPUTS_DIR"] + "/all_coloc_results.txt",
+        input_coloc_results=config["OUTPUTS_DIR"] + "/all_coloc_results.txt",
+        input_pairs=config["OUTPUTS_DIR"] + "/pairs_to_test.csv",
+    params:
+        dense_nvar_threshold=config["DENSE_NVAR_THRESHOLD"],
+        signal_dropout_threshold=config["SIGNAL_DROPOUT_THRESHOLD"],
+        coloc_h4_threshold=config["COLOC_H4_THRESHOLD"],
+        sensitivity_p12_threshold=config["SENSITIVITY_P12_THRESHOLD"],
     output:
-        coloc_signals=config["OUTPUTS_DIR"] + "/colocalized_signals.txt",
+        output_coloc_signals=config["OUTPUTS_DIR"] + "/colocalized_signals.txt",
+        output_coloc_codes=config["OUTPUTS_DIR"] + "/colocalized_signal_codes.txt",
     script:
         "../scripts/define_colocalized_signals.R"

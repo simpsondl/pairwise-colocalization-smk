@@ -1,0 +1,2 @@
+pair_id,analysis1,analysis2
+22308516_22310411_2023_37156999EAS_CD_chr1_test_2023_37156999EAS_IBD_chr1_test,pw_1,pw_2

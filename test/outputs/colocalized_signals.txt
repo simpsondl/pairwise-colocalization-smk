@@ -1,0 +1,2 @@
+gwas1,gwas2,chr,gwas1_signal_pos,gwas2_signal_pos
+2023_37156999EAS_CD_chr1_test,2023_37156999EAS_IBD_chr1_test,1,22310411,22308516
