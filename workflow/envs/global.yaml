@@ -1,0 +1,7 @@
+channels:
+  - r
+dependencies:
+  - r
+  - r-readr
+  - r-dplyr
+  - r-tidyr
