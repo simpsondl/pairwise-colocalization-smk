@@ -46,14 +46,20 @@ rule define_colocalized_signals:
 
 rule join_credible_sets:
     input:
-        expand(
-            config["OUTPUTS_DIR"] + "/coloc_credible_sets/{pair_id}_cs95.txt",
-            pair_id=COLOCALIZED,
-        ),
+        input_coloc_codes=config["OUTPUTS_DIR"] + "/colocalized_signal_codes.txt",
+        input_cs_dir=config["OUTPUTS_DIR"] + "/coloc_credible_sets/",
+    params:
+        signal_code="{signal_code}",
     output:
+        output_joined_cs=config["OUTPUTS_DIR"]
+        + "/joined_credible_sets/{signal_code}_cs95.txt",
+    script:
+        "../scripts/join_credible_sets.R"
+
+
+rule all:
+    input:
         expand(
             config["OUTPUTS_DIR"] + "/joined_credible_sets/{signal_code}_cs95.txt",
             signal_code=COLOC_IDS,
         ),
-    script:
-        "../scripts/join_credible_sets.R"
