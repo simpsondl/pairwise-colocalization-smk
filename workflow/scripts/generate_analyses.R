@@ -28,15 +28,18 @@ for(i in 1:nrow(signals)){
   for(j in matches){
     # Exclude same GWAS comparisons
     if(signals$gwas[i] != signals$gwas[j]){
-      # Define region of interest around the two nearby signals  
-      tmp.df <- data.frame(gwas1 = signals$gwas[i], 
-                           gwas2 = signals$gwas[j],
-                           chr = chr,
-                           gwas1_signal_pos = pos,
-                           gwas2_signal_pos = signals$position[j],
-                           pos.start = pos - window,
-                           pos.end = pos + window)
-      analyses <- rbind(analyses, tmp.df)
+      # Exclude same SNP comparisons
+      if(pos != signals$position[j]){
+        # Define region of interest around the two nearby signals  
+        tmp.df <- data.frame(gwas1 = signals$gwas[i], 
+                             gwas2 = signals$gwas[j],
+                             chr = chr,
+                             gwas1_signal_pos = pos,
+                             gwas2_signal_pos = signals$position[j],
+                             pos.start = pos - window,
+                             pos.end = pos + window)
+        analyses <- rbind(analyses, tmp.df)
+      }    
     }
   } 
 }
