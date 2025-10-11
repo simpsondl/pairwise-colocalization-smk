@@ -4,6 +4,8 @@
 
 This pipeline performs pairwise colocalization analysis between genetic signals from different GWAS summary statistics using the [coloc](https://chr1swallace.github.io/coloc/) R package. It identifies pairs of signals that are close together, extracts the relevant regions from summary statistics, and runs colocalization for each pair.
 
+This pipeline was originally written as a set of array jobs, and is adapted from the original pipeline, which can be viewed under the `slurm/` directory.
+
 ## Overview
 
 The workflow is managed by [Snakemake](https://snakemake.readthedocs.io/en/stable/) and is modular, allowing for scalable and reproducible analysis of many signal pairs.
@@ -43,6 +45,7 @@ The workflow is managed by [Snakemake](https://snakemake.readthedocs.io/en/stabl
 1. **Configure your input files**
    - Place your input signals CSV in `test/data/input_signals.csv` (or update the path in `workflow/config.yaml`)
    - Place your summary statistics files in `test/data/sumstats/` (or update the path in `workflow/config.yaml`)
+   - If you do not make any changes, then the pipeline will run on the test dataset
 
 2. **Edit configuration**
    - Edit `workflow/config.yaml` to set the correct paths and distance threshold (in base pairs)
