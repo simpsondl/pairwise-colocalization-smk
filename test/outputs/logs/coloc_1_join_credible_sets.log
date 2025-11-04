@@ -1,0 +1,12 @@
+[2025-11-04 16:00:13] Reading colocalized signals file
+[2025-11-04 16:00:13] Loaded 1 colocalized signals
+[2025-11-04 16:00:13] Processing colocalized signal ID: coloc_1
+[2025-11-04 16:00:13] Found matching colocalized signal information
+[2025-11-04 16:00:13] Loading credible set for analysis1: pw_1
+[2025-11-04 16:00:13] Loaded 37 SNPs from analysis1 credible set
+[2025-11-04 16:00:13] Loading credible set for analysis2: pw_2
+[2025-11-04 16:00:13] Loaded 37 SNPs from analysis2 credible set
+[2025-11-04 16:00:13] Joining credible sets by chromosome and SNP
+[2025-11-04 16:00:13] Combined credible set has 37 SNPs
+[2025-11-04 16:00:13] Writing joined credible sets output file
+[2025-11-04 16:00:13] Completed joining credible sets

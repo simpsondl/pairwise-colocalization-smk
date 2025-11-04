@@ -1,5 +1,5 @@
-# First rule generates all pairs to test
-rule find_pairs:
+# First rule generates all pairs to test - now a checkpoint
+checkpoint find_pairs:
     input:
         input_signals=config["DATA_DIR"] + "/input_signals.csv",
     output:
@@ -7,6 +7,8 @@ rule find_pairs:
         output_exact_matches=config["OUTPUTS_DIR"] + "/exact_variant_matches.csv",
     params:
         distance=config["DISTANCE_LIMIT"],
+    log:
+        config["OUTPUTS_DIR"] + "/logs/find_pairs.log",
     script:
         "../scripts/generate_analyses.R"
 
@@ -21,5 +23,7 @@ rule extract_regions:
         + "/extracted_regions/{pair_id}_sumstats.txt",
     params:
         pair_id="{pair_id}",
+    log:
+        config["OUTPUTS_DIR"] + "/logs/extract_regions_{pair_id}.log",
     script:
         "../scripts/extract_regions.R"

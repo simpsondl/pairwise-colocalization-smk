@@ -1,0 +1,15 @@
+[2025-11-04 16:00:13] Reading colocalization results file
+[2025-11-04 16:00:13] Loaded 2 colocalization results
+[2025-11-04 16:00:13] Reading analysis pairs file
+[2025-11-04 16:00:13] Loaded 2 analysis pairs
+[2025-11-04 16:00:13] Joining colocalization results with analysis information
+[2025-11-04 16:00:13] Joined data has 2 rows
+[2025-11-04 16:00:13] Adding quality control annotations
+[2025-11-04 16:00:13] Checking for AB/BA consistency in colocalization results
+[2025-11-04 16:00:13] Found 1 unique pairs for consistency check
+[2025-11-04 16:00:13] Defining colocalized signals based on consistency criteria
+[2025-11-04 16:00:13] Identified 1 colocalized signal pairs
+[2025-11-04 16:00:13] Creating output dataframes
+[2025-11-04 16:00:13] Writing colocalized signals output file
+[2025-11-04 16:00:13] Writing colocalization codes output file
+[2025-11-04 16:00:13] Completed defining colocalized signals

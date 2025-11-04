@@ -1,3 +1,7 @@
+import pandas as pd
+import os
+
+
 # Run coloc on a pair of extracted regions
 rule run_coloc:
     input:
@@ -7,6 +11,8 @@ rule run_coloc:
         + "/extracted_regions/{pair_id}_sumstats.txt",
     params:
         pair_id="{pair_id}",
+    log:
+        config["OUTPUTS_DIR"] + "/logs/run_coloc_{pair_id}.log",
     output:
         output_results=config["OUTPUTS_DIR"] + "/coloc_results/{pair_id}.txt",
         output_cs=config["OUTPUTS_DIR"] + "/coloc_credible_sets/{pair_id}_cs95.txt",
@@ -16,14 +22,21 @@ rule run_coloc:
 
 rule aggregate_coloc_results:
     input:
-        expand(config["OUTPUTS_DIR"] + "/coloc_results/{pair_id}.txt", pair_id=PAIRS),
+        pairs_file=config["OUTPUTS_DIR"] + "/pairs_to_test.csv",
+        coloc_results=lambda wildcards: expand(
+            config["OUTPUTS_DIR"] + "/coloc_results/{pair_id}.txt",
+            pair_id=get_pairs_to_test(wildcards),
+        ),
+    log:
+        config["OUTPUTS_DIR"] + "/logs/aggregate_coloc_results.log",
     output:
         aggregated_results=config["OUTPUTS_DIR"] + "/all_coloc_results.txt",
     shell:
-        "awk 'FNR == 2' {input} > {output.aggregated_results}"
+        "awk 'FNR == 2' {input.coloc_results} > {output.aggregated_results}"
 
 
-rule define_colocalized_signals:
+# Checkpoint for defining colocalized signals
+checkpoint define_colocalized_signals:
     input:
         input_coloc_results=config["OUTPUTS_DIR"] + "/all_coloc_results.txt",
         input_pairs=config["OUTPUTS_DIR"] + "/pairs_to_test.csv",
@@ -37,6 +50,8 @@ rule define_colocalized_signals:
         max_dropout=config["MAX_DROPOUT"],
         min_coloc=config["MIN_COLOC"],
         min_robust=config["MIN_ROBUST"],
+    log:
+        config["OUTPUTS_DIR"] + "/logs/define_colocalized_signals.log",
     output:
         output_coloc_signals=config["OUTPUTS_DIR"] + "/colocalized_signals.txt",
         output_coloc_codes=config["OUTPUTS_DIR"] + "/colocalized_signal_codes.txt",
@@ -50,6 +65,8 @@ rule join_credible_sets:
         input_cs_dir=config["OUTPUTS_DIR"] + "/coloc_credible_sets/",
     params:
         signal_code="{signal_code}",
+    log:
+        config["OUTPUTS_DIR"] + "/logs/{signal_code}_join_credible_sets.log",
     output:
         output_joined_cs=config["OUTPUTS_DIR"]
         + "/joined_credible_sets/{signal_code}_cs95.txt",
@@ -59,7 +76,10 @@ rule join_credible_sets:
 
 rule all:
     input:
-        expand(
+        config["OUTPUTS_DIR"] + "/all_coloc_results.txt",
+        config["OUTPUTS_DIR"] + "/colocalized_signals.txt",
+        config["OUTPUTS_DIR"] + "/colocalized_signal_codes.txt",
+        lambda wildcards: expand(
             config["OUTPUTS_DIR"] + "/joined_credible_sets/{signal_code}_cs95.txt",
-            signal_code=COLOC_IDS,
+            signal_code=get_coloc_ids_from_checkpoint(wildcards),
         ),

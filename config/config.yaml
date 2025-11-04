@@ -13,9 +13,9 @@
 # scalar should be the case fraction for cc traits, or standard deviation for quant traits
 # for quant traits, this is usually normalized to 1
 
-DATA_DIR: "test/data"
-SUMSTATS_DIR: "test/data/sumstats"
-OUTPUTS_DIR: "test/outputs"
+DATA_DIR: "../test/data"
+SUMSTATS_DIR: "../test/data/sumstats"
+OUTPUTS_DIR: "../test/outputs"
 
 ###############################################################################
 ###############################################################################

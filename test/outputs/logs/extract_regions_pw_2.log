@@ -1,0 +1,26 @@
+[2025-11-04 16:00:10] Reading pairs file:  ../test/outputs/pairs_to_test.csv
+[2025-11-04 16:00:10] Loaded  2  pairs from input file
+[2025-11-04 16:00:10] Looking for pair_id:  pw_2
+[2025-11-04 16:00:10] Found pair:  2023_37156999EAS_IBD_chr1_test  vs  2023_37156999EAS_CD_chr1_test  on chr 1  ( 22058516 - 22558516 )
+[2025-11-04 16:00:10] Starting extract_regions.R
+[2025-11-04 16:00:10] Constructing file paths for GWAS summary statistics
+[2025-11-04 16:00:10] Extracting region for GWAS1:  2023_37156999EAS_IBD_chr1_test
+[2025-11-04 16:00:10] Extracting region chr 1 : 22058516 - 22558516  from  2023_37156999EAS_IBD_chr1_test.txt
+[2025-11-04 16:00:10] Header analysis for  2023_37156999EAS_IBD_chr1_test.txt : has_header= FALSE , first_row_looks_numeric= FALSE , contains_header_keywords= FALSE
+[2025-11-04 16:00:10] Reading GWAS file with header= FALSE
+[2025-11-04 16:00:11] File has no header, assigning standard column names
+[2025-11-04 16:00:11] Read  480723  rows from GWAS file
+[2025-11-04 16:00:11] Filtering for chromosome  1  and position range  22058516 - 22558516
+[2025-11-04 16:00:11] Extracted  2587  SNPs in the target region
+[2025-11-04 16:00:11] Extracting region for GWAS2:  2023_37156999EAS_CD_chr1_test
+[2025-11-04 16:00:11] Extracting region chr 1 : 22058516 - 22558516  from  2023_37156999EAS_CD_chr1_test.txt
+[2025-11-04 16:00:11] Header analysis for  2023_37156999EAS_CD_chr1_test.txt : has_header= FALSE , first_row_looks_numeric= FALSE , contains_header_keywords= FALSE
+[2025-11-04 16:00:11] Reading GWAS file with header= FALSE
+[2025-11-04 16:00:11] File has no header, assigning standard column names
+[2025-11-04 16:00:11] Read  481123  rows from GWAS file
+[2025-11-04 16:00:11] Filtering for chromosome  1  and position range  22058516 - 22558516
+[2025-11-04 16:00:11] Extracted  2587  SNPs in the target region
+[2025-11-04 16:00:11] Performing inner join on chromosome, position, and alleles
+[2025-11-04 16:00:11] Joined dataset contains  2585  rows
+[2025-11-04 16:00:11] Writing joined sumstats to:  ../test/outputs/extracted_regions/pw_2_sumstats.txt
+[2025-11-04 16:00:11] extract_regions.R finished for pair_id= pw_2

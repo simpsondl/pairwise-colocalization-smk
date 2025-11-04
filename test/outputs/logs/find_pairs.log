@@ -1,0 +1,9 @@
+Starting generate_analyses.R
+Reading input signals from:  ../test/data/input_signals.csv
+Distance window:  250000
+Number of input signals:  14
+Number of analyses generated:  2
+Number of exact matches:  10
+Writing analyses to:  ../test/outputs/pairs_to_test.csv
+Writing exact matches to:  ../test/outputs/exact_variant_matches.csv
+generate_analyses.R finished successfully

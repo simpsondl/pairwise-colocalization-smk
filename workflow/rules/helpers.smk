@@ -2,18 +2,29 @@ import pandas as pd
 import os
 
 
-# Read the pairs file to get list of pairs to process
-if os.path.exists(config["OUTPUTS_DIR"] + "/pairs_to_test.csv"):
-    PAIRS = pd.read_csv(config["OUTPUTS_DIR"] + "/pairs_to_test.csv")[
-        "pair_index"
-    ].tolist()
-else:
-    PAIRS = []
+# Input functions that read checkpoint outputs at runtime
+def get_pairs_to_test(wildcards):
+    """Get list of pair IDs from the checkpoint output"""
+    checkpoint_output = checkpoints.find_pairs.get(**wildcards).output.output_pairs
+    pairs_df = pd.read_csv(checkpoint_output)
+    return pairs_df["pair_index"].tolist()
 
-# Get list of credible sets to join
-if os.path.exists(config["OUTPUTS_DIR"] + "/colocalized_signal_codes.txt"):
-    COLOC_IDS = pd.read_csv(config["OUTPUTS_DIR"] + "/colocalized_signal_codes.txt")[
-        "coloc_id"
-    ].tolist()
-else:
-    COLOC_IDS = []
+
+def get_coloc_ids(wildcards):
+    """Get list of colocalized signal IDs"""
+    # This depends on the define_colocalized_signals rule completing
+    coloc_file = config["OUTPUTS_DIR"] + "/colocalized_signal_codes.txt"
+    if os.path.exists(coloc_file):
+        coloc_df = pd.read_csv(coloc_file)
+        return coloc_df["coloc_id"].tolist()
+    else:
+        return []
+
+
+def get_coloc_ids_from_checkpoint(wildcards):
+    """Get colocalized signal IDs from checkpoint output"""
+    checkpoint_output = checkpoints.define_colocalized_signals.get(
+        **wildcards
+    ).output.output_coloc_codes
+    coloc_df = pd.read_csv(checkpoint_output)
+    return coloc_df["coloc_id"].tolist()

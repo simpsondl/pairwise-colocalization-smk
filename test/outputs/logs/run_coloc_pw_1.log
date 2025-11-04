@@ -1,0 +1,18 @@
+[2025-11-04 16:00:12] Starting run_coloc.R for pair_id:  pw_1
+[2025-11-04 16:00:12] Reading combined sumstats from:  ../test/outputs/extracted_regions/pw_1_sumstats.txt
+[2025-11-04 16:00:12] Reading input signals from:  ../test/data/input_signals.csv
+[2025-11-04 16:00:12] Reading pairwise analyses from:  ../test/outputs/pairs_to_test.csv
+[2025-11-04 16:00:12] Initial combined sumstats has  2592  rows
+[2025-11-04 16:00:12] After QC, combined sumstats has  2592  rows
+[2025-11-04 16:00:13] GWAS1:  2023_37156999EAS_CD_chr1_test  (type:  cc , scalar:  0.322936744349045 )
+[2025-11-04 16:00:13] GWAS2:  2023_37156999EAS_IBD_chr1_test  (type:  cc , scalar:  0.482193708331937 )
+[2025-11-04 16:00:13] Study data structures set up with  2592  SNPs
+[2025-11-04 16:00:13] Running coloc.abf...
+[2025-11-04 16:00:13] Coloc results: H0= 1.50506625837447e-10 , H1= 1.22456686314997e-05 , H2= 4.94080247550732e-07 , H3= 0.0392390965623026 , H4= 0.960748163538312
+[2025-11-04 16:00:13] Running sensitivity analysis...
+[2025-11-04 16:00:13] Sensitivity analysis completed
+[2025-11-04 16:00:13] H4 > 0.5, creating credible set...
+[2025-11-04 16:00:13] Credible set created with  37  SNPs
+[2025-11-04 16:00:13] Writing results to:  ../test/outputs/coloc_results/pw_1.txt
+[2025-11-04 16:00:13] Writing credible set to:  ../test/outputs/coloc_credible_sets/pw_1_cs95.txt
+[2025-11-04 16:00:13] run_coloc.R finished successfully for pair_id:  pw_1
