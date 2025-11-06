@@ -25,12 +25,12 @@ pairwise_analyses <- read_csv(snakemake@input[["input_pairs"]])
 
 log_msg("Initial combined sumstats has ", nrow(combined_sumstats), " rows")
 
-# Filter to just columns of interest (ie drop allele columns)
-wanted_cols <- c("chromosome", "position", "beta.gwas1", "se.gwas1", "beta.gwas2", "se.gwas2")
-combined_sumstats <- combined_sumstats[, wanted_cols]
+# QC steps applied to numeric columns
+numeric_cols <- c("chromosome", "position", "beta.gwas1", "se.gwas1", "beta.gwas2", "se.gwas2")
+combined_sumstats <- combined_sumstats[, numeric_cols]
 
 # QC
-combined_sumstats[] <- sapply(combined_sumstats, as.numeric)
+combined_sumstats[, numeric_cols] <- sapply(combined_sumstats[, numeric_cols], as.numeric)
 # If se for either GWAS is 0 or NA, remove variant
 combined_sumstats <- combined_sumstats[combined_sumstats$se.gwas1 != 0 & combined_sumstats$se.gwas2 != 0,]
 combined_sumstats <- combined_sumstats[!is.na(combined_sumstats$se.gwas1) & !is.na(combined_sumstats$se.gwas2),]
@@ -65,7 +65,8 @@ log_msg("GWAS2: ", gwas2_name, " (type: ", gwas2_type, ", scalar: ", gwas2_scala
 # Set up study data structures
 study1 <- list(beta = combined_sumstats$beta.gwas1,
                varbeta = (combined_sumstats$se.gwas1)^2,
-               snp = paste(combined_sumstats$chromosome, combined_sumstats$position, sep = ":"),
+               snp = paste(combined_sumstats$chromosome, combined_sumstats$position,
+                           combined_sumstats$allele1, combined_sumstats$allele2, sep = ":"),
                type = gwas1_type,
                scalar = gwas1_scalar)
 
@@ -75,7 +76,8 @@ ifelse(study1$type == "cc",
 
 study2 <- list(beta = combined_sumstats$beta.gwas2,
                varbeta = (combined_sumstats$se.gwas2)^2,
-               snp = paste(combined_sumstats$chromosome, combined_sumstats$position, sep = ":"),
+               snp = paste(combined_sumstats$chromosome, combined_sumstats$position, 
+                           combined_sumstats$allele1, combined_sumstats$allele2, sep = ":"),
                type = gwas2_type,
                scalar = gwas2_scalar)
 
